@@ -1,0 +1,11 @@
+# Archivos que no se suben a Vercel (si no, se servirían como estáticos)
+.env
+.env*.local
+local.db*
+server.js
+scripts/
+.vscode/
+.DS_Store
+subidas-locales/
+contenido-original/
+PROMPT-VSCODE.md

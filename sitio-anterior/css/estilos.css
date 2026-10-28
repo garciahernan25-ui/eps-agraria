@@ -1,0 +1,153 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #4f0aaa;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+    margin: 0;
+}
+
+.calendario-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    /* Mantenemos el overflow-x: auto solo para escritorio si la tabla es grande */
+    overflow-x: auto; 
+}
+
+h1 {
+    /* Color de fondo solicitado: #0aaa5f */
+    background-color: hsl(180, 8%, 3%); 
+    color: #ffffff;
+    text-align: center;
+    padding: 20px;
+    margin: -30px -30px 20px -30px; /* Extiende el color al borde del contenedor */
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    font-size: 2.2em;
+    font-weight: 600;
+}
+
+.nota {
+    text-align: center;
+    font-style: italic;
+    color: #666;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+}
+
+.calendario-huerta {
+    width: 100%;
+    border-collapse: collapse; 
+    margin-top: 20px;
+}
+
+.calendario-huerta th, .calendario-huerta td {
+    border: 1px solid #e0e0e0;
+    padding: 14px 18px;
+    text-align: left;
+    white-space: nowrap; /* Evita saltos de línea en escritorio */
+}
+
+.calendario-huerta thead th {
+    background-color: #d8f5e6; /* Verde muy claro para contraste */
+    color: #0aaa5f; /* Uso del color principal */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.calendario-huerta tbody tr:nth-child(even) {
+    background-color: #f7fcf9; /* Rayas sutiles */
+}
+
+.calendario-huerta tbody tr:hover {
+    background-color: #e8f5e8; /* Efecto al pasar el mouse */
+    cursor: default;
+}
+
+.calendario-huerta td strong {
+    color: #057a41;
+}
+
+.fuente {
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: #0aaa5f;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* -------------------------------------- */
+/* ADAPTACIÓN PARA MÓVILES (Optimizado)   */
+/* -------------------------------------- */
+
+@media screen and (max-width: 768px) {
+    
+    .calendario-container {
+        padding: 15px; 
+        margin: 10px auto;
+        box-shadow: none;
+        /* Aseguramos que el contenido no se salga de la pantalla */
+        overflow-x: hidden; 
+        width: 95%; 
+    }
+
+    h1 {
+        font-size: 1.5em; 
+        padding: 15px;
+        margin: -15px -15px 15px -15px;
+    }
+    
+    /* Ocultamos el encabezado y transformamos la tabla */
+    .calendario-huerta {
+        border: none;
+        display: block;
+        width: 100%; 
+    }
+
+    .calendario-huerta thead {
+        display: none; 
+    }
+
+    .calendario-huerta tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #0aaa5f;
+        border-radius: 8px;
+        background-color: #fff;
+    }
+
+    .calendario-huerta td {
+        /* Usamos Flexbox para organizar etiqueta y valor */
+        display: flex; 
+        align-items: flex-start; /* Alinea al inicio si hay varias líneas */
+        text-align: right; 
+        border: none;
+        padding: 10px 15px;
+        position: static; 
+        white-space: normal; /* Permite saltos de línea en el contenido */
+    }
+
+    .calendario-huerta td::before {
+        content: attr(data-label) ":"; 
+        /* CLAVE: La etiqueta toma un ancho fijo y el valor ocupa el resto */
+        min-width: 120px; 
+        text-align: left;
+        font-weight: bold;
+        color: #333;
+        flex-shrink: 0; /* Evita que la etiqueta se encoja */
+        margin-right: 10px; /* Espacio entre etiqueta y valor */
+    }
+    
+    .calendario-huerta td strong {
+        /* CLAVE: El valor toma el espacio restante */
+        flex-grow: 1; 
+        text-align: right;
+        white-space: normal; /* Permitimos que el texto se rompa sin problemas */
+    }
+}

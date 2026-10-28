@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Panel docente - E.P.S Agraria n°1 Alte. Brown</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <header class="header">
+        <a href='/'>
+           <img class="header__logo" src="img/Horticultura.jpg" alt="logotipo">
+        </a>
+    </header>
+
+    <nav class="navegacion">
+        <a class='navegacion__enlace' href="cultivos.html">Cultivos</a>
+        <a class='navegacion__enlace' href="biopreparados.html">biopreparados</a>
+        <a class='navegacion__enlace' href="nosotros.html">NOSOTROS</a>
+        <a class='navegacion__enlace' href="novedades.html">Novedades</a>
+        <a class='navegacion__enlace' href="galeria.html">Galería</a>
+    </nav>
+
+<main class="contenedor panel">
+    <h1>Panel docente</h1>
+
+    <form class="panel-login" id="formLogin" hidden>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" autocomplete="username" required>
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required>
+        <button type="submit" class="btn btn-principal">Ingresar</button>
+        <p class="panel-error" id="errorLogin" role="alert"></p>
+        <p class="panel-ayuda">¿No tenés cuenta o te olvidaste la contraseña? Pedísela a un administrador del sitio.</p>
+    </form>
+
+    <section id="contenidoPanel" hidden>
+        <div class="panel-usuario">
+            <span id="saludo"></span>
+            <button type="button" class="btn btn-secundario" id="botonContrasena">Cambiar mi contraseña</button>
+            <button type="button" class="btn btn-secundario" id="botonSalir">Cerrar sesión</button>
+        </div>
+
+        <div class="panel-tabs" role="tablist" aria-label="Secciones del panel">
+            <button type="button" class="panel-tab" role="tab" data-tab="publicaciones">Publicaciones</button>
+            <button type="button" class="panel-tab" role="tab" data-tab="cultivos">Cultivos</button>
+            <button type="button" class="panel-tab" role="tab" data-tab="docentes">Docentes</button>
+            <button type="button" class="panel-tab" role="tab" data-tab="paginas">Páginas</button>
+            <button type="button" class="panel-tab" role="tab" data-tab="inicio">Inicio</button>
+            <button type="button" class="panel-tab" role="tab" data-tab="experiencias">Experiencias</button>
+            <button type="button" class="panel-tab" role="tab" data-tab="consultas">Buzón</button>
+            <button type="button" class="panel-tab" role="tab" data-tab="instagram" data-solo-admin hidden>Instagram</button>
+            <button type="button" class="panel-tab" role="tab" data-tab="usuarios" data-solo-admin hidden>Usuarios</button>
+        </div>
+
+        <div class="panel-aviso" id="aviso" role="status" hidden></div>
+        <div class="panel-vista" id="vista" role="tabpanel"></div>
+    </section>
+</main>
+
+<!-- Formularios de crear/editar (los arma js/admin.js) -->
+<dialog class="modal" id="modal">
+    <form class="modal__form" id="modalForm" novalidate>
+        <header class="modal__encabezado">
+            <h2 id="modalTitulo"></h2>
+            <button type="button" class="modal__cerrar" data-cerrar aria-label="Cerrar">&times;</button>
+        </header>
+        <div class="modal__cuerpo" id="modalCuerpo"></div>
+        <p class="panel-error" id="modalError" role="alert"></p>
+        <!-- div y no footer: styles.css les da fondo verde a todos los <footer> -->
+        <div class="modal__pie">
+            <button type="button" class="btn btn-secundario" data-cerrar>Cancelar</button>
+            <button type="submit" class="btn btn-principal" id="modalGuardar">Guardar</button>
+        </div>
+    </form>
+</dialog>
+
+<footer>
+    <div class="footer-contenido">
+        <p>&copy; 2025, E.P.S Agraria n°1/C.E.A 34 Alte.Brown</p>
+    </div>
+</footer>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>

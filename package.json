@@ -1,0 +1,39 @@
+{
+  "name": "eps-agraria",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "tsx --env-file-if-exists=.env scripts/migrate.ts",
+    "crear-admin": "tsx --env-file-if-exists=.env scripts/crear-admin.ts",
+    "importar": "tsx --env-file-if-exists=.env scripts/importar-contenido.ts"
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.15.15",
+    "@tinymce/tinymce-react": "^6.3.1",
+    "@vercel/blob": "^2.8.2",
+    "jspdf": "^4.2.1",
+    "next": "16.4.3",
+    "qrcode": "^1.5.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "sanitize-html": "^2.18.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/sanitize-html": "^2.16.2",
+    "tinymce": "^7.9.3",
+    "tsx": "^4.23.15",
+    "typescript": "5.9.3"
+  }
+}

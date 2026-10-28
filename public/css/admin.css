@@ -1,0 +1,294 @@
+/* Panel docente (admin.html). Usa las variables de styles.css.
+   Ojo: en styles.css 1rem = 10px (html { font-size: 62.5% }). */
+
+[hidden] { display: none !important; }
+
+.panel {
+    max-width: 100rem;
+    padding: 0 1.2rem 4rem;
+    font-family: arial, Arial, Helvetica, sans-serif;
+    font-size: 1.6rem;
+}
+.panel p { color: inherit; }
+
+/* ---------- Botones y campos ---------- */
+
+.btn {
+    min-height: 4.4rem;              /* fácil de tocar en el celular */
+    padding: 0.8rem 1.6rem;
+    border: none;
+    border-radius: 0.6rem;
+    font-size: 1.5rem;
+    font-family: inherit;
+    cursor: pointer;
+    line-height: 1.2;
+}
+.btn:disabled { opacity: 0.55; cursor: wait; }
+.btn-principal { background-color: var(--primarioOscuro); color: var(--blanco); }
+.btn-secundario { background-color: #e7ece9; color: #1d2b24; }
+.btn-peligro { background-color: #c62828; color: var(--blanco); }
+.btn-chico { min-height: 3.6rem; padding: 0.4rem 1.1rem; font-size: 1.4rem; }
+.btn-icono { min-width: 4rem; padding: 0.4rem; font-size: 1.6rem; }
+
+.panel input[type="text"], .panel input[type="email"], .panel input[type="password"],
+.panel textarea, .panel select,
+.modal input[type="text"], .modal input[type="email"], .modal input[type="password"],
+.modal textarea, .modal select {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.6rem;               /* 16px: el celular no hace zoom al escribir */
+    font-family: inherit;
+    border: 1px solid #b9c5be;
+    border-radius: 0.6rem;
+    background-color: var(--blanco);
+    color: #1d2b24;
+}
+.modal textarea { min-height: 10rem; resize: vertical; }
+
+.panel-error { color: #b71c1c; min-height: 1.2em; margin: 0.5rem 0; font-weight: bold; }
+.panel-ayuda { font-size: 1.4rem; color: #44564c; }
+
+/* ---------- Login ---------- */
+
+.panel-login {
+    max-width: 40rem;
+    margin: 2rem auto;
+    display: grid;
+    gap: 1rem;
+    background-color: var(--blanco);
+    color: #1d2b24;
+    padding: 2.4rem;
+    border-radius: 1rem;
+}
+.panel-login label { font-weight: bold; }
+
+/* ---------- Barra superior y pestañas ---------- */
+
+.panel-usuario {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-items: center;
+    justify-content: flex-end;
+    color: var(--blanco);
+    margin-bottom: 1.2rem;
+}
+.panel-usuario span { margin-right: auto; }
+
+.panel-tabs {
+    display: flex;
+    gap: 0.6rem;
+    overflow-x: auto;                /* en el celular se desliza de costado */
+    padding-bottom: 0.6rem;
+    margin-bottom: 1.2rem;
+    scrollbar-width: thin;
+}
+.panel-tab {
+    flex: 0 0 auto;
+    min-height: 4.4rem;
+    padding: 0.8rem 1.4rem;
+    border: none;
+    border-radius: 0.6rem;
+    background-color: var(--primarioOscuro);
+    color: var(--blanco);
+    font-family: var(--fuenteprincipal);
+    font-size: 1.9rem;
+    cursor: pointer;
+}
+.panel-tab[aria-selected="true"] { background-color: var(--secundario); color: var(--negro); }
+
+.panel-aviso {
+    padding: 1.2rem 1.6rem;
+    border-radius: 0.6rem;
+    margin-bottom: 1.2rem;
+    background-color: #e8f5e9;
+    color: #1b5e20;
+    border-left: 0.6rem solid #2e7d32;
+}
+.panel-aviso--error { background-color: #ffebee; color: #b71c1c; border-left-color: #c62828; }
+
+/* ---------- Vistas ---------- */
+
+.panel-vista {
+    background-color: var(--blanco);
+    color: #1d2b24;
+    border-radius: 1rem;
+    padding: 1.6rem;
+}
+.panel-vista h2, .panel-vista h3, .modal h2, .modal h3 { color: var(--primarioOscuro); text-align: left; }
+.panel-vista h2 { font-size: 2.6rem; margin: 0; }
+
+.vista-encabezado {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.6rem;
+}
+.vista-encabezado p { margin: 0.4rem 0 0; color: #44564c; font-size: 1.4rem; }
+.panel-vacio { color: #44564c; text-align: center; padding: 2rem; }
+
+.lista { display: grid; gap: 1rem; }
+
+.item {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    border: 1px solid #dde4e0;
+    border-radius: 0.8rem;
+    padding: 1.2rem;
+}
+.item--pendiente { border-left: 0.6rem solid #f9a825; }
+.item--aprobada { border-left: 0.6rem solid #2e7d32; }
+.item--no-leida { border-left: 0.6rem solid #6c5ce7; }
+.item--inactivo { opacity: 0.6; }
+.item--borrador { border-left: 0.6rem solid #9e9e9e; }
+
+.item__foto {
+    flex: 0 0 9rem;
+    width: 9rem;
+    height: 9rem;
+    object-fit: cover;
+    border-radius: 0.6rem;
+    background-color: #eef2ef;
+}
+.item__cuerpo { flex: 1; min-width: 0; }
+.item__titulo { font-weight: bold; font-size: 1.7rem; margin: 0 0 0.3rem; overflow-wrap: anywhere; }
+.item__meta { font-size: 1.35rem; color: #5b6b62; margin: 0 0 0.6rem; }
+.item__texto { white-space: pre-wrap; margin: 0 0 1rem; overflow-wrap: anywhere; }
+.item__miniaturas { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.item__miniaturas img, .item__miniaturas video {
+    width: 7rem; height: 7rem; object-fit: cover; border-radius: 0.4rem; background-color: var(--negro);
+}
+.item__foto-grande { max-width: 30rem; width: 100%; border-radius: 0.6rem; display: block; margin-bottom: 1rem; }
+.item__acciones { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+.etiqueta {
+    display: inline-block;
+    color: #1d2b24;
+    font-size: 1.2rem;
+    padding: 0.2rem 0.8rem;
+    border-radius: 2rem;
+    background-color: #e7ece9;
+    margin-right: 0.4rem;
+}
+.etiqueta--admin { background-color: var(--secundario); }
+
+@media (max-width: 600px) {
+    .panel-vista { padding: 1.2rem; }
+    .item { flex-wrap: wrap; }
+    .item__foto { flex-basis: 7rem; width: 7rem; height: 7rem; }
+}
+
+/* Cuadro para mostrar una contraseña temporal */
+.clave-temporal {
+    background-color: #fff8e1;
+    border: 2px dashed #f9a825;
+    border-radius: 0.8rem;
+    padding: 1.2rem;
+    margin-bottom: 1.6rem;
+}
+.clave-temporal code {
+    display: inline-block;
+    font-size: 2.2rem;
+    padding: 0.4rem 1rem;
+    background-color: var(--blanco);
+    border-radius: 0.4rem;
+    user-select: all;
+}
+
+/* Datos de Instagram */
+.datos { display: grid; grid-template-columns: max-content 1fr; gap: 0.6rem 1.6rem; margin: 0 0 1.6rem; }
+.datos dt { font-weight: bold; }
+.datos dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+    .datos { grid-template-columns: 1fr; }
+    .datos dd { margin-bottom: 0.8rem; }
+}
+
+/* ---------- Formularios (modal) ---------- */
+
+.modal {
+    width: min(96vw, 72rem);
+    max-height: 94vh;
+    padding: 0;
+    border: none;
+    border-radius: 1rem;
+    font-family: arial, Arial, Helvetica, sans-serif;
+    font-size: 1.6rem;
+    color: #1d2b24;
+}
+.modal::backdrop { background-color: rgba(0, 0, 0, 0.6); }
+.modal p { color: inherit; font-size: 1.5rem; }
+.modal__form { display: flex; flex-direction: column; max-height: 94vh; }
+.modal__encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 1.6rem;
+    border-bottom: 1px solid #dde4e0;
+}
+.modal__encabezado h2 { margin: 0; font-size: 2.4rem; }
+.modal__cerrar { border: none; background: none; font-size: 3.2rem; line-height: 1; cursor: pointer; min-width: 4.4rem; min-height: 4.4rem; }
+.modal__cuerpo { padding: 1.6rem; overflow-y: auto; display: grid; gap: 1.4rem; }
+.modal .panel-error { padding: 0 1.6rem; }
+.modal__pie {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    padding: 1.2rem 1.6rem;
+    border-top: 1px solid #dde4e0;
+}
+@media (max-width: 600px) {
+    .modal { width: 100vw; max-width: 100vw; height: 100%; max-height: 100%; border-radius: 0; }
+    .modal__form { height: 100%; max-height: 100%; }
+    .modal__cuerpo { flex: 1; }
+    .modal__pie .btn { flex: 1; }
+}
+
+.campo { display: grid; gap: 0.5rem; }
+.campo > label, .campo > span { font-weight: bold; }
+.campo small { color: #5b6b62; font-size: 1.3rem; }
+.campo-check { display: flex; gap: 0.8rem; align-items: center; font-weight: bold; }
+.campo-check input { width: 2.2rem; height: 2.2rem; }
+
+/* Foto con previsualización */
+.foto-campo { display: flex; gap: 1.2rem; align-items: center; flex-wrap: wrap; }
+.foto-campo img {
+    width: 12rem; height: 12rem; object-fit: cover; border-radius: 0.6rem; background-color: #eef2ef;
+}
+.foto-campo .foto-vacia {
+    width: 12rem; height: 12rem; border-radius: 0.6rem; background-color: #eef2ef;
+    display: grid; place-items: center; color: #5b6b62; font-size: 1.3rem; text-align: center;
+}
+.foto-campo__botones { display: grid; gap: 0.6rem; }
+
+/* Botón que abre el selector de archivos (el input real queda oculto) */
+.selector-archivo { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.selector-archivo input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+
+/* Lista de fotos y videos de una publicación */
+.medios-lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1rem; }
+.medio {
+    border: 1px solid #dde4e0;
+    border-radius: 0.6rem;
+    overflow: hidden;
+    background-color: #f6f8f7;
+}
+.medio img, .medio video { width: 100%; height: 12rem; object-fit: cover; display: block; background-color: var(--negro); }
+.medio__info { font-size: 1.2rem; padding: 0.4rem 0.6rem; color: #44564c; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.medio__nuevo { color: #1b5e20; font-weight: bold; }
+.medio__acciones { display: flex; justify-content: space-between; padding: 0.4rem; gap: 0.4rem; }
+
+.progreso { font-weight: bold; color: var(--primarioOscuro); }
+
+/* ---------- Editor de páginas ---------- */
+
+.editor-pagina { display: grid; gap: 1.2rem; }
+.editor-pagina__barra { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; }
+.editor-pagina__barra .separador { flex: 1; }
+.tox-tinymce { border-radius: 0.6rem !important; }
+
+/* Enlaces con forma de botón */
+a.btn { display: inline-flex; align-items: center; text-decoration: none; }

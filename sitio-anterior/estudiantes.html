@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E.P.S Agraria n°1 Alte. Brown</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" 
+          integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header class="header">
+        <a href='/'>
+           <img class="header__logo" src="img/Horticultura.jpg" alt="logotipo"> 
+
+        </a>
+    </header>
+    
+    <nav class="navegacion">
+        <a class='navegacion__enlace ' href="cultivos.html">Cultivos</a>
+        <a class='navegacion__enlace' href="biopreparados.html">biopreparados</a>
+        <a class='navegacion__enlace' href="nosotros.html">NOSOTROS</a>
+        <a class='navegacion__enlace' href="novedades.html">Novedades</a>
+        <a class='navegacion__enlace' href="galeria.html">Galería</a>
+    </nav>
+ <main class="contenedor">
+    
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Experiencias Escolares</title>
+    <link rel="stylesheet" href="styles.css"> 
+</head>
+<body> 
+    
+   <script>
+        // La clave del buzón se valida en el servidor (ya no está escrita acá).
+        let claveBuzon = null;
+
+        // --- 1. FUNCIÓN PARA GESTIONAR EL CAMPO DE NOMBRE ---
+        function toggleNombreInput(esAnonimo, formId) {
+            const formContainer = document.getElementById(formId);
+            if (!formContainer) return;
+
+            const nombreGroup = formContainer.querySelector('#nombre-input-group');
+            const nombreInput = formContainer.querySelector('#nombre');
+
+            if (!nombreGroup || !nombreInput) return;
+
+            if (esAnonimo) {
+                nombreGroup.style.display = 'none';
+                nombreInput.removeAttribute('required');
+                nombreInput.value = '';
+            } else {
+                nombreGroup.style.display = 'block';
+                nombreInput.setAttribute('required', 'required');
+            }
+        }
+
+        // Evita que un mensaje con etiquetas HTML rompa (o ataque) la página.
+        function escaparHTML(texto) {
+            const div = document.createElement('div');
+            div.textContent = texto;
+            return div.innerHTML;
+        }
+
+        function formatearFecha(fechaSQL) {
+            return new Date(fechaSQL.replace(' ', 'T') + 'Z')
+                .toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        async function leerRespuesta(respuesta) {
+            const datos = await respuesta.json().catch(() => ({}));
+            if (!respuesta.ok) throw new Error(datos.error || 'No se pudo conectar con el servidor.');
+            return datos;
+        }
+
+        // --- 2. CARGAR LAS EXPERIENCIAS APROBADAS DESDE LA BASE DE DATOS ---
+        async function cargarExperiencias() {
+            const seccion = document.querySelector('.seccion-comentarios');
+            const estado = document.getElementById('estadoComentarios');
+            try {
+                const experiencias = await leerRespuesta(await fetch('/api/experiencias'));
+                seccion.querySelectorAll('.comentario-item').forEach(el => el.remove());
+                estado.textContent = experiencias.length ? '' : 'Todavía no hay experiencias publicadas. ¡Sé el primero!';
+
+                for (const exp of experiencias) {
+                    const foto = exp.foto_url
+                        ? `<img class="comentario-foto" src="${escaparHTML(exp.foto_url)}" alt="Foto compartida" style="max-width: 100%; border-radius: 8px;">`
+                        : '';
+                    seccion.insertAdjacentHTML('beforeend', `
+                        <div class="comentario-item">
+                            <p class="comentario-meta">
+                                Enviado por: <strong>${escaparHTML(exp.nombre || 'Anónimo')}</strong> el ${formatearFecha(exp.creado_en)}
+                            </p>
+                            <p class="comentario-texto">"${escaparHTML(exp.texto)}"</p>
+                            ${foto}
+                        </div>
+                    `);
+                }
+            } catch (error) {
+                estado.textContent = 'No se pudieron cargar las experiencias.';
+            }
+        }
+
+        // --- 3. ACCESO AL BUZÓN CONFIDENCIAL ---
+        async function accederBuzon() {
+            const claveIngresada = prompt("Ingresa tu clave de estudiante");
+            if (!claveIngresada) return;
+
+            try {
+                await leerRespuesta(await fetch('/api/buzon/acceso', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ clave: claveIngresada }),
+                }));
+            } catch (error) {
+                alert("¡Clave incorrecta! Acceso denegado.");
+                return;
+            }
+
+            claveBuzon = claveIngresada;
+            const formConfidencial = document.getElementById('formConfidencial');
+            const botonAcceso = document.getElementById('botonAccesoBuzon');
+
+            formConfidencial.style.display = 'block';
+            botonAcceso.style.display = 'none';
+
+            alert("Acceso exitoso. Ahora puedes enviar la consulta confidencial.");
+        }
+
+        // --- 4. ENVÍO DE LOS FORMULARIOS ---
+        async function enviarExperiencia(event) {
+            event.preventDefault();
+            const form = event.target;
+            const boton = form.querySelector('button[type="submit"]');
+
+            if (form.querySelector('#experiencia').value.trim().length < 10) {
+                alert('Por favor, escribe al menos 10 caracteres en el mensaje.');
+                return;
+            }
+
+            boton.disabled = true;
+            try {
+                // FormData incluye la foto (si se eligió una).
+                await leerRespuesta(await fetch('/api/experiencias', { method: 'POST', body: new FormData(form) }));
+                form.reset();
+                toggleNombreInput(false, 'formPublico');
+                alert('¡Gracias! Tu experiencia fue enviada. Se publicará cuando un docente la revise.');
+            } catch (error) {
+                alert(error.message);
+            } finally {
+                boton.disabled = false;
+            }
+        }
+
+        async function enviarConsulta(event) {
+            event.preventDefault();
+            const form = event.target;
+            const boton = form.querySelector('button[type="submit"]');
+            const datos = Object.fromEntries(new FormData(form));
+
+            if (datos.consulta.trim().length < 20) {
+                alert('Por favor, escribe al menos 20 caracteres en el mensaje.');
+                return;
+            }
+
+            boton.disabled = true;
+            try {
+                await leerRespuesta(await fetch('/api/buzon', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...datos, clave: claveBuzon }),
+                }));
+                form.reset();
+                toggleNombreInput(false, 'formConfidencial');
+                alert('¡Consulta enviada! Tu mensaje confidencial ha sido registrado por los docentes.');
+            } catch (error) {
+                alert(error.message);
+            } finally {
+                boton.disabled = false;
+            }
+        }
+
+        // --- INICIALIZACIÓN (Escuchar eventos) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const formPublico = document.getElementById('formPublico');
+            const formConfidencial = document.getElementById('formConfidencial');
+            const botonAccesoBuzon = document.getElementById('botonAccesoBuzon');
+
+            if (formPublico) {
+                formPublico.addEventListener('submit', enviarExperiencia);
+                formPublico.querySelectorAll('input[name="anonimo"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => toggleNombreInput(e.target.value === 'anonimo', 'formPublico'));
+                });
+                toggleNombreInput(false, 'formPublico');
+                cargarExperiencias();
+            }
+
+            if (formConfidencial) {
+                formConfidencial.addEventListener('submit', enviarConsulta);
+                formConfidencial.querySelectorAll('input[name="anonimo"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => toggleNombreInput(e.target.value === 'anonimo', 'formConfidencial'));
+                });
+            }
+
+            if (botonAccesoBuzon) {
+                botonAccesoBuzon.addEventListener('click', accederBuzon);
+            }
+        });
+    </script>
+</head>
+<body>
+
+<form class="formulario-experiencia" id="formPublico">
+    
+    <h2>Comparte tu Experiencia en la Escuela Profesional Secundaria</h2>
+
+    <section class="formulario-introduccion">
+        <h3>¡Tu Voz es Importante!</h3>
+        <p>Este espacio es para que los estudiantes compartan sus vivencias, aprendizajes y sugerencias. Las experiencias se muestran públicamente abajo.</p>
+    </section>
+
+    <div class="form-control-group carga-foto-opcion">
+        <label for="foto">Cargar una Foto Opcional (de tu paso por la escuela):</label>
+        <input type="file" id="foto" name="foto" accept="image/*">
+    </div>
+    
+    <div class="form-control-group">
+        <label>¿Cómo quieres compartir tu experiencia?</label>
+        <div class="anonimato-opciones">
+            <label>
+                <input type="radio" name="anonimo" value="nombre" checked> Con mi Nombre
+            </label>
+            <label>
+                <input type="radio" name="anonimo" value="anonimo"> De forma Anónima
+            </label>
+        </div>
+    </div>
+    
+    <div class="form-control-group" id="nombre-input-group">
+        <label for="nombre">Nombre del Estudiante:</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Escribe tu nombre completo" required>
+    </div>
+
+    <div class="form-control-group">
+        <label for="experiencia">Tu Experiencia en la Escuela:</label>
+        <textarea id="experiencia" name="experiencia" placeholder="¿Qué destacarías?..." minlength="10" maxlength="3000" required></textarea>
+    </div>
+
+    <button type="submit">Enviar Experiencia</button>
+
+    <section class="seccion-comentarios">
+        <h3>Experiencias Recientes de Estudiantes</h3>
+        <p class="comentario-meta" id="estadoComentarios">Cargando experiencias...</p>
+    </section>
+
+</form>
+
+---
+
+<div style="text-align: center; margin: 40px auto 20px; max-width: 650px;">
+    <h2></h2>
+    <button type="button" id="botonAccesoBuzon" 
+            style="padding: 15px 30px; background-color: #6c5ce7; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.2em; font-weight: bold;">
+        Acceder al Buzón
+    </button>
+</div>
+
+<form class="formulario-consulta-confidencial" id="formConfidencial" style="display: none;">
+    
+    <h2>Buzón de Consultas y Sugerencias Confidenciales</h2>
+
+    <section class="consulta-introduccion">
+        <h3>Absoluta Confidencialidad</h3>
+        <p>Este formulario está diseñado para que solo los docentes puedan leer tus mensajes. Úsalo para plantear dudas, inquietudes o sugerencias que te dé vergüenza hablarlo en persona. ¡Tu identidad está protegida!</p>
+    </section>
+    
+    <div class="form-control-group">
+        <label>¿Cómo quieres que te identifiquemos (solo para docentes)?</label>
+        <div class="anonimato-opciones">
+            <label>
+                <input type="radio" name="anonimo" value="nombre" checked> Con mi Nombre
+            </label>
+            <label>
+                <input type="radio" name="anonimo" value="anonimo"> De forma Anónima
+            </label>
+        </div>
+    </div>
+    
+    <div class="form-control-group" id="nombre-input-group">
+        <label for="nombre">Nombre del Estudiante:</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Escribe tu nombre (opcional si es anónimo)" required>
+    </div>
+
+    <div class="form-control-group">
+        <label for="consulta">Escribe tu duda, inquietud o sugerencia aquí:</label>
+        <textarea id="consulta" name="consulta" placeholder="Ej: Tengo una duda sobre el examen de física..." minlength="20" required></textarea>
+    </div>
+
+    <button type="submit">Enviar Consulta Confidencial</button>
+
+</form>
+</html>
+
+</main>
+    <body id="inicio"> 
+
+<footer>
+    <div class="footer-contenido">
+        
+        <a href="#inicio" class="btn-inicio">
+            Volver al Inicio
+        </a>
+
+        <p>&copy; 2025, E.P.S Agraria n°1/C.E.A 34 Alte.Brown</p>
+        
+        <div class="redes-sociales">
+            <a href="https://www.instagram.com/epsagraria/?igsh=MXZoaHVqYWVvNHp6bQ%3D%3D#" target="_blank" aria-label="Síguenos en Instagram">
+                <i class="fab fa-instagram"></i> 
+            </a>
+            <p>¡Seguinos en nuestro instagram!</p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

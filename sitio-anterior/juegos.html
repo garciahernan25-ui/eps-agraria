@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E.P.S Agraria n°1 Alte. Brown</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" 
+          integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header class="header">
+        <a href='/'>
+           <img class="header__logo" src="img/Horticultura.jpg" alt="logotipo"> 
+
+        </a>
+    </header>
+    
+    <nav class="navegacion">
+        <a class='navegacion__enlace ' href="cultivos.html">Cultivos</a>
+        <a class='navegacion__enlace' href="biopreparados.html">biopreparados</a>
+        <a class='navegacion__enlace' href="nosotros.html">NOSOTROS</a>
+        <a class='navegacion__enlace' href="novedades.html">Novedades</a>
+        <a class='navegacion__enlace' href="galeria.html">Galería</a>
+    </nav>
+ <main class="contenedor">
+    
+   <body>
+
+<section class="quiz-huerta">
+    <h3>🌱 Pon a prueba tus conocimientos sobre la Huerta 🌱</h3>
+
+    <div class="score-board">
+        <p>Pregunta: <span id="current-question-number">0</span> / <span id="total-questions-number">0</span></p>
+        <p>Puntaje Actual: <span id="puntaje">0</span></p>
+    </div>
+
+    <div class="pregunta-contenedor" id="quiz-container">
+        
+        <p class="pregunta-texto" id="pregunta-texto">Cargando pregunta...</p>
+        
+        <div class="opciones-respuesta" id="opciones-respuesta">
+            </div>
+    </div>
+
+    <button class="next-btn" id="siguiente-btn" style="display: none;">Siguiente Pregunta</button>
+
+    <div id="resultado-final" style="text-align: center; display: none; margin-top: 20px;">
+        </div>
+</section>
+
+<script>
+    // --- DATOS DEL JUEGO: Preguntas y Respuestas ---
+    const preguntasHuerta = [
+        {
+            pregunta: "¿Qué se forma al cavar en línea recta y arrojar la tierra hacia el centro en el Paso 1?",
+            opciones: ["A) La rotación", "B) El mulching", "C) El lomo"],
+            respuestaCorrecta: "C) El lomo",
+            explicacion: "El lomo es el desnivel elevado donde se cultivará, creado al cavar los surcos.",
+            paso: 1
+        },
+        {
+            pregunta: "¿Qué debes verificar sobre los cultivos en el Paso 2 antes de plantar?",
+            opciones: ["A) Que sean exóticos y grandes.", "B) Que sean de temporada y época del año.", "C) Que tengan flores vistosas."],
+            respuestaCorrecta: "B) Que sean de temporada y época del año.",
+            explicacion: "Es crucial elegir cultivos que se adapten a la temporada para asegurar su correcto crecimiento.",
+            paso: 2
+        },
+        {
+            pregunta: "¿Cómo se llama el proceso de recubrir el suelo con pasto seco u hojas?",
+            opciones: ["A) Rotación", "B) Asociación", "C) Mulching"],
+            respuestaCorrecta: "C) Mulching",
+            explicacion: "El mulching ayuda a evitar que la tierra se seque y mantiene la humedad del suelo.",
+            paso: 5
+        },
+        {
+            pregunta: "¿Por qué se riega el suelo del lomo y no las hojas directamente?",
+            opciones: ["A) Para ahorrar agua.", "B) Porque el agua quema las hojas (efecto espejo).", "C) Solo se riega por la noche."],
+            respuestaCorrecta: "B) Porque el agua quema las hojas (efecto espejo).",
+            explicacion: "El sol puede quemar las hojas si tienen gotas de agua encima, debido al efecto lupa o espejo.",
+            paso: 6
+        },
+        {
+            pregunta: "¿Qué concepto consiste en cultivar varios tipos de plantas distintas para que no compitan por nutrientes?",
+            opciones: ["A) La Rotación", "B) La Asociación", "C) El Trasplante"],
+            respuestaCorrecta: "B) La Asociación",
+            explicacion: "La asociación es cultivar distintas plantas juntas (raíz, follaje, bulbo) que se complementen.",
+            paso: "Observaciones"
+        }
+    ];
+
+    // --- VARIABLES DE ESTADO ---
+    let indicePreguntaActual = 0;
+    let puntaje = 0;
+    let respuestaSeleccionada = false;
+
+    // --- REFERENCIAS DOM ---
+    const preguntaTexto = document.getElementById('pregunta-texto');
+    const opcionesContainer = document.getElementById('opciones-respuesta');
+    const puntajeDisplay = document.getElementById('puntaje');
+    const siguienteBtn = document.getElementById('siguiente-btn');
+    const resultadoFinal = document.getElementById('resultado-final');
+    const totalPreguntasDisplay = document.getElementById('total-questions-number');
+    const currentQuestionNumberDisplay = document.getElementById('current-question-number');
+
+    // --- FUNCIONES DEL JUEGO ---
+
+    function cargarPregunta() {
+        if (indicePreguntaActual >= preguntasHuerta.length) {
+            mostrarResultadoFinal();
+            return;
+        }
+
+        const preguntaObj = preguntasHuerta[indicePreguntaActual];
+        
+        // Actualizar números de pregunta
+        currentQuestionNumberDisplay.textContent = indicePreguntaActual + 1;
+        totalPreguntasDisplay.textContent = preguntasHuerta.length;
+        
+        // Mostrar pregunta
+        preguntaTexto.textContent = preguntaObj.pregunta;
+        opcionesContainer.innerHTML = ''; // Limpiar opciones anteriores
+        siguienteBtn.style.display = 'none'; // Ocultar el botón Siguiente
+        respuestaSeleccionada = false; // Resetear estado de selección
+
+        // Generar botones de opción
+        preguntaObj.opciones.forEach(opcion => {
+            const button = document.createElement('button');
+            button.classList.add('opcion-btn');
+            button.textContent = opcion;
+            button.addEventListener('click', () => manejarRespuesta(button, opcion, preguntaObj.respuestaCorrecta, preguntaObj.explicacion));
+            opcionesContainer.appendChild(button);
+        });
+    }
+
+    function manejarRespuesta(botonClickeado, respuestaUsuario, respuestaCorrecta, explicacion) {
+        if (respuestaSeleccionada) return; // Evita doble click
+
+        respuestaSeleccionada = true;
+        const todosLosBotones = opcionesContainer.querySelectorAll('.opcion-btn');
+
+        todosLosBotones.forEach(btn => {
+            btn.disabled = true; // Deshabilita todos los botones
+            if (btn.textContent === respuestaCorrecta) {
+                btn.classList.add('correcta');
+            } else if (btn === botonClickeado) {
+                btn.classList.add('incorrecta');
+            }
+        });
+
+        // Verificar y actualizar puntaje
+        if (respuestaUsuario === respuestaCorrecta) {
+            puntaje++;
+            puntajeDisplay.textContent = puntaje;
+        }
+
+        // Mostrar explicación debajo de las opciones
+        const explicacionDiv = document.createElement('p');
+        explicacionDiv.style.marginTop = '15px';
+        explicacionDiv.style.color = respuestaUsuario === respuestaCorrecta ? '#2e7d32' : '#c62828';
+        explicacionDiv.innerHTML = `<strong>Feedback:</strong> ${explicacion}`;
+        opcionesContainer.appendChild(explicacionDiv);
+
+        siguienteBtn.style.display = 'block';
+    }
+
+    function siguientePregunta() {
+        indicePreguntaActual++;
+        cargarPregunta();
+    }
+
+    function mostrarResultadoFinal() {
+        // Ocultar el contenedor de la pregunta y el botón Siguiente
+        document.getElementById('quiz-container').style.display = 'none';
+        siguienteBtn.style.display = 'none';
+
+        const porcentaje = Math.round((puntaje / preguntasHuerta.length) * 100);
+        let mensaje = '';
+        let color = '';
+
+        if (porcentaje >= 80) {
+            mensaje = "¡Felicidades! Eres un experto en huertas. 💚";
+            color = '#2e7d32';
+        } else if (porcentaje >= 50) {
+            mensaje = "¡Bien hecho! Tienes conocimientos sólidos. 🌿";
+            color = '#f7b731';
+        } else {
+            mensaje = "Sigue practicando. Repasa los pasos de la huerta. 🌱";
+            color = '#c62828';
+        }
+
+        resultadoFinal.innerHTML = `
+            <h3 style="color: ${color}; font-size: 2em;">Juego Terminado</h3>
+            <p style="font-size: 1.5em; font-weight: bold; margin: 15px 0;">Puntaje Final: ${puntaje} de ${preguntasHuerta.length}</p>
+            <p style="font-size: 1.2em;">${mensaje}</p>
+            <button class="next-btn" onclick="window.location.reload()">Volver a Jugar</button>
+        `;
+        resultadoFinal.style.display = 'block';
+    }
+
+    // --- INICIALIZACIÓN ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Configurar el botón Siguiente
+        siguienteBtn.addEventListener('click', siguientePregunta);
+        
+        // Cargar la primera pregunta
+        cargarPregunta();
+    });
+
+</script>
+</body>
+   
+</main>
+    <body id="inicio"> 
+
+<footer>
+    <div class="footer-contenido">
+        
+        <a href="#inicio" class="btn-inicio">
+            Volver al Inicio
+        </a>
+
+        <p>&copy; 2025, E.P.S Agraria n°1/C.E.A 34 Alte.Brown</p>
+        
+        <div class="redes-sociales">
+            <a href="https://www.instagram.com/epsagraria/?igsh=MXZoaHVqYWVvNHp6bQ%3D%3D#" target="_blank" aria-label="Síguenos en Instagram">
+                <i class="fab fa-instagram"></i> 
+            </a>
+            <p>¡Seguinos en nuestro instagram!</p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

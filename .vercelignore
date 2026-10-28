@@ -1,0 +1,10 @@
+# Archivos que no se suben a Vercel
+.env
+.env*.local
+local.db*
+.subidas-locales/
+sitio-anterior/
+contenido-original/
+PROMPT-VSCODE.md
+.vscode/
+.DS_Store

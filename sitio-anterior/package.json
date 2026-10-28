@@ -1,0 +1,22 @@
+{
+  "name": "eps-agraria",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env server.js",
+    "db:migrate": "node --env-file-if-exists=.env scripts/migrate.js",
+    "crear-admin": "node --env-file-if-exists=.env scripts/crear-admin.js",
+    "importar": "node --env-file-if-exists=.env scripts/importar-contenido.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.15.15",
+    "@vercel/blob": "^2.8.2",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "sanitize-html": "^2.18.1"
+  }
+}

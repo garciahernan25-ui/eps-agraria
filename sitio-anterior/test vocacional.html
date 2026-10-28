@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Vocacional — E.P.S Agraria n°1 Alte. Brown</title>
+  <link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" referrerpolicy="no-referrer" />
+  
+  <!-- JSPDF (necesario para ambos PDF) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    if (typeof window.jspdf === 'undefined') {
+      document.write('<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"><\/script>');
+    }
+  </script>
+
+  <style>
+    /* (Todo el CSS es el mismo que antes, solo agrego el estilo del nuevo botón) */
+    :root{
+      --verde: #0aaa5f;
+      --verde-oscuro: #057952;
+      --verde-claro: #d8f5e6;
+      --verde-rayas: #f7fcf9;
+      --verde-hover: #e8f5e8;
+      --blanco: #ffffff;
+      --texto: #333333;
+      --texto-suave: #666666;
+      --borde: #e0e0e0;
+      --primario: #0aaa5f;
+      --primarioOscuro: #057952;
+      --secundario: #FFCE00;
+      --negro: #000;
+      --fuenteprincipal: 'Staatliches', cursive;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--verde);
+      color: var(--texto);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .header { display: flex; justify-content: center; }
+    .header__logo {
+      display: block;
+      margin: 30px auto;
+      width: auto;
+      height: auto;
+      max-width: min(700px, 100%);
+    }
+    .navegacion {
+      background-color: var(--primarioOscuro);
+      padding: 5px 0;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .navegacion__enlace {
+      font-family: var(--fuenteprincipal);
+      color: var(--blanco);
+      font-size: 25px;
+      margin-right: 20px;
+      text-decoration: none;
+    }
+    .navegacion__enlace:last-of-type { margin-right: 0; }
+    .navegacion__enlace:hover { color: var(--secundario); }
+    .stage {
+      max-width: 680px;
+      margin: 40px auto;
+      background-color: var(--blanco);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      min-height: 70vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .stage h1, .stage h2, .stage h3 {
+      margin: 0;
+      color: var(--verde-oscuro);
+      font-weight: 600;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: left;
+    }
+    .stage a { color: var(--verde); }
+    .compass {
+      width: 34px; height: 34px;
+      border: 2px solid var(--verde);
+      border-radius: 50%;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .compass::before, .compass::after{
+      content: "";
+      position: absolute;
+      background: var(--verde);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .compass::before{ width: 2px; height: 12px; top: -3px; }
+    .compass::after{ width: 2px; height: 8px; bottom: -2px; background: var(--verde-oscuro); }
+    .masthead {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .masthead .kicker {
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      color: var(--verde);
+      font-weight: 600;
+    }
+    .screen { display: none; flex: 1; flex-direction: column; }
+    .screen.active { display: flex; }
+    #intro h1 {
+      font-size: clamp(26px, 6vw, 38px);
+      line-height: 1.2;
+    }
+    #intro .subtitle {
+      color: var(--verde);
+      font-size: 18px;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+    #intro .instructions {
+      margin-top: 28px;
+      padding: 20px 22px;
+      background-color: var(--verde-rayas);
+      border-left: 4px solid var(--verde);
+      border-radius: 0 8px 8px 0;
+      font-size: 15px;
+      color: var(--texto);
+    }
+    #intro .instructions strong { color: var(--verde-oscuro); }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--texto-suave);
+    }
+    .meta-row div { display: flex; flex-direction: column; gap: 2px; }
+    .meta-row span.num { font-size: 26px; color: var(--verde-oscuro); font-weight: 700; line-height: 1; }
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      margin-top: 36px;
+      align-self: flex-start;
+      background-color: var(--verde);
+      color: var(--blanco);
+      font-weight: 600;
+      font-size: 16px;
+      padding: 14px 30px;
+      border-radius: 8px;
+      transition: background-color 0.15s ease, transform 0.15s ease;
+    }
+    .btn-primary:hover { background-color: var(--verde-oscuro); transform: translateY(-1px); }
+    .btn-primary:focus-visible { outline: 3px solid var(--verde-oscuro); outline-offset: 3px; }
+    .btn-secondary {
+      margin-top: 14px;
+      align-self: flex-start;
+      background: transparent;
+      color: var(--verde-oscuro);
+      border: 2px solid var(--verde);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 12px 22px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.15s ease;
+    }
+    .btn-secondary:hover { background-color: var(--verde-claro); }
+    .btn-secondary:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; }
+    .btn-secondary:disabled { opacity: 0.6; cursor: default; }
+    /* Botón de descarga de resultados (mismo estilo) */
+    .btn-download-results {
+      margin-top: 14px;
+      align-self: flex-start;
+      background-color: var(--verde-oscuro);
+      color: var(--blanco);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 12px 22px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.15s ease, transform 0.15s ease;
+      border: none;
+    }
+    .btn-download-results:hover { background-color: var(--verde); transform: translateY(-1px); }
+    .btn-download-results:disabled { opacity: 0.6; cursor: default; }
+
+    .progress-track {
+      height: 8px;
+      background-color: var(--verde-claro);
+      position: relative;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      background-color: var(--verde);
+      width: 0%;
+      transition: width 0.35s ease;
+    }
+    .progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--texto-suave);
+      margin-bottom: 36px;
+      letter-spacing: 0.3px;
+    }
+    .q-number {
+      font-size: 15px;
+      color: var(--verde);
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+    .q-statement {
+      font-size: clamp(20px, 5vw, 28px);
+      line-height: 1.35;
+      font-weight: 600;
+      color: var(--texto);
+    }
+    .choices {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+    .choice-btn {
+      flex: 1;
+      padding: 18px 12px;
+      background-color: var(--blanco);
+      border: 2px solid var(--borde);
+      color: var(--texto);
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .choice-btn:hover { border-color: var(--verde); background-color: var(--verde-rayas); }
+    .choice-btn[data-val="V"].selected {
+      background-color: var(--verde-claro);
+      border-color: var(--verde);
+      color: var(--verde-oscuro);
+    }
+    .choice-btn[data-val="F"].selected {
+      background-color: #f0f0f0;
+      border-color: #b0b0b0;
+      color: #555;
+    }
+    .choice-btn:focus-visible { outline: 3px solid var(--verde); outline-offset: 2px; }
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 40px;
+      gap: 12px;
+    }
+    .nav-btn {
+      background: none;
+      color: var(--texto-suave);
+      font-size: 15px;
+      padding: 10px 6px;
+    }
+    .nav-btn:hover { color: var(--verde-oscuro); }
+    .nav-btn:disabled { opacity: 0.3; cursor: default; }
+    .nav-btn.next { color: var(--verde); font-weight: 600; }
+    .nav-btn:focus-visible { outline: 3px solid var(--verde); outline-offset: 2px; }
+    #results h2 {
+      font-size: clamp(22px, 5vw, 30px);
+    }
+    #results .subtitle {
+      color: var(--verde);
+      font-size: 15px;
+      margin-top: 6px;
+      margin-bottom: 30px;
+      font-weight: 500;
+    }
+    .career-panel {
+      margin-bottom: 36px;
+      padding: 22px;
+      background-color: var(--verde-claro);
+      border: 1px solid var(--verde);
+      border-radius: 10px;
+    }
+    .career-panel h3 {
+      font-size: 18px;
+      margin-bottom: 4px;
+      color: var(--verde-oscuro);
+    }
+    .career-panel .career-note {
+      font-size: 13px;
+      color: var(--texto-suave);
+      margin-bottom: 18px;
+    }
+    .career-group { margin-bottom: 16px; }
+    .career-group:last-child { margin-bottom: 0; }
+    .career-group .career-cat {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--verde-oscuro);
+      margin-bottom: 8px;
+    }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      font-size: 13px;
+      padding: 6px 14px;
+      border: 1px solid var(--verde);
+      border-radius: 16px;
+      color: var(--verde-oscuro);
+      background-color: var(--blanco);
+    }
+    .local-offers {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--verde);
+    }
+    .local-offers .local-label {
+      font-size: 12px;
+      color: var(--texto-suave);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .local-offers ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .local-offers .place {
+      color: var(--texto-suave);
+      font-size: 12.5px;
+    }
+    .local-offers .empty {
+      font-size: 13px;
+      color: var(--texto-suave);
+      font-style: italic;
+    }
+    .career-panel .portal-link {
+      display: inline-block;
+      margin-top: 18px;
+      font-size: 14px;
+      color: var(--verde-oscuro);
+      border-bottom: 1px solid var(--verde-oscuro);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .career-panel .portal-link:hover { color: var(--verde); border-color: var(--verde); }
+    .bar-row {
+      margin-bottom: 18px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      padding: 0;
+      color: inherit;
+      font-family: inherit;
+    }
+    .bar-row:focus-visible { outline: 3px solid var(--verde); outline-offset: 4px; }
+    .bar-label-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    .bar-label-row .name { font-weight: 600; color: var(--texto); }
+    .bar-label-row .tag {
+      font-size: 12px;
+      color: var(--verde-oscuro);
+      flex-shrink: 0;
+      font-weight: 600;
+    }
+    .bar-track {
+      height: 12px;
+      background-color: var(--verde-claro);
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      background-color: #8fd3ac;
+      width: 0%;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: 6px;
+    }
+    .bar-fill.marked { background-color: var(--verde); }
+    .bar-fill.top { background-color: var(--verde-oscuro); }
+    .detail-panel {
+      margin-top: 30px;
+      padding: 22px;
+      background-color: var(--verde-rayas);
+      border-left: 4px solid var(--verde);
+      border-radius: 0 8px 8px 0;
+      display: none;
+      animation: fadein 0.25s ease;
+    }
+    .detail-panel.visible { display: block; }
+    @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+    .detail-panel h3 { font-size: 20px; margin-bottom: 10px; color: var(--verde-oscuro); }
+    .detail-panel p { font-size: 14.5px; line-height: 1.65; color: var(--texto); margin: 0 0 10px; }
+    .detail-panel p:last-child { margin-bottom: 0; }
+    .detail-panel .field-label { color: var(--verde-oscuro); font-weight: 700; }
+    .restart-row { margin-top: 44px; }
+    .restart-row button {
+      background: none;
+      border: 2px solid var(--verde);
+      color: var(--verde-oscuro);
+      padding: 11px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: background-color 0.15s ease;
+    }
+    .restart-row button:hover { background-color: var(--verde-claro); }
+    footer {
+      background-color: var(--primarioOscuro);
+      color: #fff;
+      padding: 20px 0;
+      width: 100%;
+      margin-top: 40px;
+    }
+    .footer-contenido {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn-inicio {
+      display: inline-block;
+      background-color: var(--negro);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.9em;
+      transition: background-color 0.3s ease;
+      margin: 5px 0;
+    }
+    .btn-inicio:hover { background-color: var(--secundario); }
+    .footer-contenido p {
+      margin: 5px 0;
+      font-size: 0.9em;
+      color: #fff;
+    }
+    .redes-sociales {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .redes-sociales a {
+      color: #fff;
+      font-size: 1.8em;
+      transition: color 0.3s ease;
+      text-decoration: none;
+    }
+    .redes-sociales .fa-instagram:hover { color: #E1306C; }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+    @media screen and (max-width: 768px) {
+      .header__logo { margin: 20px auto; }
+      .navegacion__enlace { font-size: 20px; margin-right: 14px; }
+      .stage {
+        margin: 20px auto;
+        width: 92%;
+        padding: 24px 20px 40px;
+      }
+      .masthead { margin-bottom: 26px; }
+    }
+    @media (max-width: 600px) {
+      .footer-contenido {
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+      }
+      .footer-contenido p { order: 2; margin: 10px 0; }
+      .btn-inicio { order: 1; }
+      .redes-sociales { order: 3; margin-top: 5px; }
+    }
+    @media screen and (max-width: 480px) {
+      .stage { padding: 20px 16px 32px; width: 94%; }
+      .choices { flex-direction: column; }
+      .meta-row { gap: 18px; }
+      .nav-row { padding-top: 30px; }
+      .career-panel, .detail-panel { padding: 18px; }
+      .bar-label-row { font-size: 13px; }
+      .navegacion__enlace { font-size: 18px; }
+    }
+  </style>
+</head>
+<body id="inicio">
+
+  <!-- Header -->
+  <header class="header">
+    <a href="/">
+      <img class="header__logo" src="img/Horticultura.jpg" alt="logotipo">
+    </a>
+  </header>
+
+  <!-- Menú -->
+  <nav class="navegacion">
+    <a class="navegacion__enlace" href="cultivos.html">cultivos</a>
+    <a class="navegacion__enlace" href="biopreparados.html">biopreparados</a>
+    <a class="navegacion__enlace" href="nosotros.html">NOSOTROS</a>
+    <a class='navegacion__enlace' href="novedades.html">Novedades</a>
+    <a class='navegacion__enlace' href="galeria.html">Galería</a>
+  </nav>
+
+  <!-- Test -->
+  <div class="stage">
+    <div class="masthead">
+      <div class="compass"></div>
+      <div class="kicker">Orientación vocacional</div>
+    </div>
+
+    <!-- INTRO -->
+    <section id="intro" class="screen active">
+      <h1>Test de Inteligencias Múltiples</h1>
+      <div class="subtitle">Según el modelo de Howard Gardner</div>
+      <div class="instructions">
+        Leé cada afirmación y decidí si describe una característica <strong>fuerte y verdadera</strong> en vos.
+        Si te representa, marcá <strong>Verdadero</strong>; si no, marcá <strong>Falso</strong>. No hay
+        respuestas correctas o incorrectas — respondé con lo primero que te parezca cierto, sin pensarlo demasiado.
+      </div>
+      <div class="meta-row">
+        <div><span class="num">35</span>afirmaciones</div>
+        <div><span class="num">7</span>inteligencias</div>
+        <div><span class="num">~6</span>minutos</div>
+      </div>
+      <button class="btn-primary" id="start-btn">Empezar el test</button>
+      <button class="btn-secondary" id="qr-btn"><i class="fas fa-qrcode"></i> Descargar QR para imprimir (PDF A4)</button>
+    </section>
+
+    <!-- QUESTION -->
+    <section id="quiz" class="screen">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-label">
+        <span id="progress-text">Pregunta 1 de 35</span>
+        <span id="progress-pct">3%</span>
+      </div>
+      <div class="q-number" id="q-number">N.º 01</div>
+      <div class="q-statement" id="q-statement">—</div>
+      <div class="choices">
+        <button class="choice-btn" data-val="V" id="btn-v">Verdadero</button>
+        <button class="choice-btn" data-val="F" id="btn-f">Falso</button>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" id="prev-btn">← anterior</button>
+        <button class="nav-btn next" id="next-btn" disabled>siguiente →</button>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="results" class="screen">
+      <h2>Tu mapa de inteligencias</h2>
+      <div class="subtitle">Tocá una barra para ver el detalle de esa inteligencia</div>
+      <div class="career-panel" id="career-panel"></div>
+      <div id="bars-container"></div>
+      <div class="detail-panel" id="detail-panel"></div>
+      
+      <!-- Botones de acción (nuevo) -->
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px;">
+        <button class="btn-download-results" id="download-results-btn">
+          <i class="fas fa-file-pdf"></i> Descargar resultados en PDF
+        </button>
+        <button class="btn-secondary" id="restart-btn" style="margin-top:0;">Volver a empezar</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-contenido">
+      <a href="#inicio" class="btn-inicio">Volver al Inicio</a>
+      <p>&copy; 2025, E.P.S Agraria n°1/C.E.A 34 Alte.Brown</p>
+      <div class="redes-sociales">
+        <a href="https://www.instagram.com/epsagraria/?igsh=MXZoaHVqYWVvNHp6bQ%3D%3D#" target="_blank" rel="noopener" aria-label="Síguenos en Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <p>¡Seguinos en nuestro instagram!</p>
+      </div>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  // ---------- Datos ----------
+  const statements = [
+    "Prefiero hacer un mapa que explicarle a alguien cómo tiene que llegar.",
+    "Si estoy enojado(a) o contento(a), generalmente sé exactamente por qué.",
+    "Sé tocar (o antes sabía tocar) un instrumento musical.",
+    "Asocio la música con mis estados de ánimo.",
+    "Puedo sumar o multiplicar mentalmente con mucha rapidez.",
+    "Puedo ayudar a un amigo a manejar sus sentimientos porque yo lo pude hacer antes en relación a sentimientos parecidos.",
+    "Me gusta trabajar con calculadoras y computadoras.",
+    "Aprendo rápido a bailar un ritmo nuevo.",
+    "No me es difícil decir lo que pienso en el curso de una discusión o debate.",
+    "Disfruto de una buena charla, discurso o sermón.",
+    "Siempre distingo el norte del sur, esté donde esté.",
+    "Me gusta reunir grupos de personas en una fiesta o en un evento especial.",
+    "La vida me parece vacía sin música.",
+    "Siempre entiendo los gráficos que vienen en las instrucciones de equipos o instrumentos.",
+    "Me gusta hacer rompecabezas y entretenerme con juegos electrónicos.",
+    "Me fue fácil aprender a andar en bicicleta (o patines).",
+    "Me enojo cuando oigo una discusión o una afirmación que parece ilógica.",
+    "Soy capaz de convencer a otros de que sigan mis planes.",
+    "Tengo buen sentido de equilibrio y coordinación.",
+    "Con frecuencia veo configuraciones y relaciones entre números con más rapidez y facilidad que otros.",
+    "Me gusta construir modelos (o hacer esculturas).",
+    "Tengo agudeza para encontrar el significado de las palabras.",
+    "Puedo mirar un objeto de una manera y con la misma facilidad verlo desde otra perspectiva.",
+    "Con frecuencia hago la conexión entre una pieza de música y algún evento de mi vida.",
+    "Me gusta trabajar con números y figuras.",
+    "Me gusta sentarme silenciosamente y reflexionar sobre mis sentimientos íntimos.",
+    "Con sólo mirar la forma de construcciones y estructuras me siento a gusto.",
+    "Me gusta tararear, silbar y cantar en la ducha o cuando estoy sola.",
+    "Soy bueno(a) para el atletismo.",
+    "Me gusta escribir cartas detalladas a mis amigos.",
+    "Generalmente me doy cuenta de la expresión que tengo en la cara.",
+    "Me doy cuenta de las expresiones en la cara de otras personas.",
+    "Me mantengo \"en contacto\" con mis estados de ánimo. No me cuesta identificarlos.",
+    "Me doy cuenta de los estados de ánimo de otros.",
+    "Me doy cuenta bastante bien de lo que otros piensan de mí."
+  ];
+
+  const categoryQuestions = {
+    A: [9,10,17,22,30],
+    B: [5,7,15,20,25],
+    C: [1,11,14,23,27],
+    D: [8,16,19,21,29],
+    E: [3,4,13,24,28],
+    F: [2,6,26,31,33],
+    G: [12,18,32,34,35]
+  };
+
+  const categories = {
+    A: {
+      name: "Inteligencia verbal-lingüística",
+      bio: "Se apoya en ambos hemisferios del cerebro; una zona llamada área de Broca es responsable de construir oraciones gramaticales.",
+      cap: "Comprender el orden y el significado de las palabras al leer, escribir, hablar y escuchar.",
+      hab: "Hablar y escribir eficazmente.",
+      perf: ["Periodista", "Escritor/a", "Abogado/a", "Docente de Lengua", "Locutor/a", "Guionista", "Traductor/a"]
+    },
+    B: {
+      name: "Inteligencia lógico-matemática",
+      bio: "Usa principalmente el hemisferio lógico del cerebro; es la más cercana al concepto tradicional de inteligencia.",
+      cap: "Identificar modelos, calcular, formular y verificar hipótesis, usar el método científico y el razonamiento inductivo y deductivo.",
+      hab: "Formular calendarios, medir el tiempo y estimar cantidades y distancias con exactitud.",
+      perf: ["Ingeniero/a", "Programador/a", "Economista", "Contador/a", "Físico/a", "Analista de datos"]
+    },
+    C: {
+      name: "Inteligencia visual-espacial",
+      bio: "El hemisferio derecho es la sede más importante del cálculo espacial; las lesiones en la región posterior derecha afectan la orientación y el reconocimiento de caras y escenas.",
+      cap: "Presentar ideas visualmente, crear imágenes mentales, percibir detalles visuales, dibujar y confeccionar bocetos.",
+      hab: "Realizar creaciones visuales y visualizar con precisión, incluso construir un modelo mental en tres dimensiones del mundo.",
+      perf: ["Arquitecto/a", "Diseñador/a gráfico", "Fotógrafo/a", "Publicista", "Urbanista", "Piloto"]
+    },
+    D: {
+      name: "Inteligencia corporal-kinestésica",
+      bio: "El control del movimiento se localiza en la corteza motora; cada hemisferio domina el lado opuesto del cuerpo.",
+      cap: "Realizar actividades que requieren fuerza, rapidez, flexibilidad, coordinación óculo-manual y equilibrio.",
+      hab: "Usar las manos para crear o hacer reparaciones, expresarse a través del cuerpo.",
+      perf: ["Cirujano/a", "Bailarín/ina", "Deportista", "Kinesiólogo/a", "Actor/actriz", "Profesor/a de Educación Física"]
+    },
+    E: {
+      name: "Inteligencia musical-rítmica",
+      bio: "Las áreas implicadas suelen ubicarse en el hemisferio derecho, aunque menos localizadas que el lenguaje; su pérdida se conoce como amusia.",
+      cap: "Escuchar, cantar y tocar instrumentos con sensibilidad.",
+      hab: "Crear y analizar música.",
+      perf: ["Músico/a", "Compositor/a", "Productor/a musical", "Cantante", "Técnico/a de sonido", "Docente de Música"]
+    },
+    F: {
+      name: "Inteligencia intrapersonal",
+      bio: "Los lóbulos frontales cumplen un papel central en la personalidad y en la regulación de las emociones.",
+      cap: "Plantearse metas, evaluar las propias habilidades y desventajas, y controlar el pensamiento propio.",
+      hab: "Meditar, exhibir disciplina personal, conservar la compostura y dar lo mejor de sí mismo.",
+      perf: ["Psicólogo/a", "Escritor/a", "Filósofo/a", "Investigador/a", "Emprendedor/a", "Coach"]
+    },
+    G: {
+      name: "Inteligencia interpersonal",
+      bio: "Los lóbulos frontales también son clave en el conocimiento interpersonal; una lesión en esta área puede cambiar profundamente la personalidad.",
+      cap: "Trabajar con gente, ayudar a las personas a identificar y superar problemas.",
+      hab: "Reconocer y responder a los sentimientos y personalidades de otros.",
+      perf: ["Docente", "Psicólogo/a", "Administrador/a", "Terapeuta", "Recursos Humanos", "Trabajador/a social", "Vendedor/a"]
+    }
+  };
+
+  const localOffers = {
+    A: [
+      { course: "Inglés para negocios nivel II", place: "Junín 1837, Burzaco — CFP N.º 401" },
+      { course: "Operador de herramientas de marketing y venta digital", place: "Bollini y Salaberry 99, Claypole — CFP N.º 402" }
+    ],
+    B: [
+      { course: "Programador de sistemas informáticos multimediales", place: "Garibaldi 220, Almirante Brown — CFP N.º 401" },
+      { course: "Auxiliar en liquidación de impuestos", place: "Lapacho 551, Malvinas Argentinas — CFP N.º 401" },
+      { course: "Pensamiento computacional - programación", place: "Tomás Guido y Junín, Almirante Brown — CFP N.º 403" },
+      { course: "Habilidades digitales", place: "Tomás Guido y Junín, Almirante Brown — CFP N.º 403" }
+    ],
+    C: [
+      { course: "Diseño gráfico de sistemas informáticos nivel II", place: "Esteban Adrogué 1224, Adrogué — CFP N.º 401" },
+      { course: "Diseño de productos impresos en 3D", place: "Mitre 1458, Adrogué — CFP N.º 401" },
+      { course: "Diseño proyectual asistido por computadora avanzado", place: "Esteban Adrogué 1224, Adrogué — CFP N.º 401" },
+      { course: "Diseño de página web", place: "Figueroa 781 y Araujo, Don Orione — CFP N.º 402" },
+      { course: "Diseño y fabricación digital", place: "Tomás Guido y Junín, Almirante Brown — CFP N.º 403" }
+    ],
+    D: [
+      { course: "Soldador básico", place: "Junín 1837, Burzaco — CFP N.º 401" },
+      { course: "Gasista domiciliario", place: "Figueroa 781 y Araujo, Don Orione — CFP N.º 402" },
+      { course: "Ebanista", place: "Jorge 3838, Rafael Calzada — CFP N.º 404" },
+      { course: "Instalador de sistemas eléctricos de energías renovables", place: "Jorge 3838, Rafael Calzada — CFP N.º 404" },
+      { course: "Cocinero/a para comedor escolar", place: "Lapacho 551, Malvinas Argentinas — CFP N.º 401" },
+      { course: "Elaborador/a de alfajores regionales", place: "Pedro Goyena 1120, Almirante Brown — CFP N.º 401" }
+    ],
+    E: [],
+    F: [],
+    G: [
+      { course: "Práctico en organización de eventos", place: "Esteban Adrogué 1224, Adrogué — CFP N.º 401" },
+      { course: "Auxiliar de sommelier", place: "Lapacho 551, Malvinas Argentinas — CFP N.º 401" },
+      { course: "Auxiliar en instituciones educativas", place: "Lapacho 551, Malvinas Argentinas — CFP N.º 401" },
+      { course: "Mucama/o para establecimientos de salud", place: "Garibaldi 220, Almirante Brown — CFP N.º 401" }
+    ]
+  };
+  const FORMATE_BROWN_URL = "https://formate.brown.gob.ar/";
+
+  const questionCategory = {};
+  Object.keys(categoryQuestions).forEach(cat => {
+    categoryQuestions[cat].forEach(n => { questionCategory[n] = cat; });
+  });
+
+  const total = statements.length;
+  const answers = new Array(total).fill(null);
+  let current = 0;
+
+  // ---------- Elementos ----------
+  const introScreen = document.getElementById('intro');
+  const quizScreen = document.getElementById('quiz');
+  const resultsScreen = document.getElementById('results');
+
+  const startBtn = document.getElementById('start-btn');
+  const qNumber = document.getElementById('q-number');
+  const qStatement = document.getElementById('q-statement');
+  const btnV = document.getElementById('btn-v');
+  const btnF = document.getElementById('btn-f');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const progressFill = document.getElementById('progress-fill');
+  const progressText = document.getElementById('progress-text');
+  const progressPct = document.getElementById('progress-pct');
+  const barsContainer = document.getElementById('bars-container');
+  const detailPanel = document.getElementById('detail-panel');
+  const restartBtn = document.getElementById('restart-btn');
+  const downloadResultsBtn = document.getElementById('download-results-btn');
+
+  // Variables globales para los resultados (se setean en showResults)
+  let lastScores = null;
+  let lastOrder = null;
+
+  function showScreen(el){
+    [introScreen, quizScreen, resultsScreen].forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderQuestion(){
+    const n = current + 1;
+    qNumber.textContent = "N.º " + String(n).padStart(2,'0');
+    qStatement.textContent = statements[current];
+
+    btnV.classList.toggle('selected', answers[current] === 'V');
+    btnF.classList.toggle('selected', answers[current] === 'F');
+
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = answers[current] === null;
+    nextBtn.textContent = (current === total - 1) ? "ver resultado →" : "siguiente →";
+
+    const pct = Math.round(((current) / total) * 100);
+    progressFill.style.width = pct + "%";
+    progressText.textContent = "Pregunta " + n + " de " + total;
+    progressPct.textContent = pct + "%";
+  }
+
+  function selectAnswer(val){
+    answers[current] = val;
+    renderQuestion();
+  }
+
+  btnV.addEventListener('click', () => selectAnswer('V'));
+  btnF.addEventListener('click', () => selectAnswer('F'));
+
+  prevBtn.addEventListener('click', () => {
+    if (current > 0){ current--; renderQuestion(); }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (answers[current] === null) return;
+    if (current === total - 1){
+      showResults();
+    } else {
+      current++;
+      renderQuestion();
+    }
+  });
+
+  startBtn.addEventListener('click', () => {
+    current = 0;
+    showScreen(quizScreen);
+    renderQuestion();
+  });
+
+  restartBtn.addEventListener('click', () => {
+    answers.fill(null);
+    current = 0;
+    detailPanel.classList.remove('visible');
+    showScreen(introScreen);
+  });
+
+  // ---------- Resultados ----------
+  function computeScores(){
+    const scores = {};
+    Object.keys(categoryQuestions).forEach(cat => {
+      let s = 0;
+      categoryQuestions[cat].forEach(qn => { if (answers[qn - 1] === 'V') s++; });
+      scores[cat] = s;
+    });
+    return scores;
+  }
+
+  function showResults(){
+    const scores = computeScores();
+    const order = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
+    lastScores = scores;
+    lastOrder = order;
+
+    barsContainer.innerHTML = "";
+    detailPanel.classList.remove('visible');
+    renderCareerPanel(scores, order);
+
+    order.forEach((cat, idx) => {
+      const score = scores[cat];
+      const info = categories[cat];
+      const pct = (score / 5) * 100;
+
+      let tag = "";
+      let fillClass = "bar-fill";
+      if (score === 5){ tag = "sobresaliente"; fillClass += " top"; }
+      else if (score >= 4){ tag = "habilidad marcada"; fillClass += " marked"; }
+
+      const row = document.createElement('button');
+      row.className = 'bar-row';
+      row.setAttribute('type', 'button');
+      row.innerHTML =
+        '<div class="bar-label-row"><span class="name">' + info.name + '</span>' +
+        '<span class="tag">' + (tag ? tag + " · " : "") + score + '/5</span></div>' +
+        '<div class="bar-track"><div class="' + fillClass + '" style="width:0%"></div></div>';
+
+      row.addEventListener('click', () => showDetail(cat, score));
+      barsContainer.appendChild(row);
+
+      requestAnimationFrame(() => {
+        const fillEl = row.querySelector('.bar-fill');
+        setTimeout(() => { fillEl.style.width = pct + "%"; }, 30 + idx * 60);
+      });
+    });
+
+    showScreen(resultsScreen);
+    showDetail(order[0], scores[order[0]]);
+  }
+
+  function showDetail(cat, score){
+    const info = categories[cat];
+    let statusLine = "";
+    if (score === 5) statusLine = "Puntaje sobresaliente (5/5).";
+    else if (score >= 4) statusLine = "Habilidad marcada (" + score + "/5).";
+    else statusLine = "Puntaje: " + score + "/5.";
+
+    detailPanel.innerHTML =
+      '<h3>' + info.name + '</h3>' +
+      '<p>' + statusLine + '</p>' +
+      '<p><span class="field-label">Aspectos biológicos: </span>' + info.bio + '</p>' +
+      '<p><span class="field-label">Capacidades implicadas: </span>' + info.cap + '</p>' +
+      '<p><span class="field-label">Habilidades relacionadas: </span>' + info.hab + '</p>' +
+      '<p><span class="field-label">Perfiles profesionales: </span>' + info.perf.join(", ") + '</p>';
+    detailPanel.classList.add('visible');
+  }
+
+  function renderCareerPanel(scores, order){
+    let leading = order.filter(cat => scores[cat] >= 4);
+    let note;
+    if (leading.length === 0){
+      leading = order.slice(0, 2);
+      note = "Ninguna inteligencia llegó a 4 puntos, así que estas son orientativas según tus dos puntajes más altos.";
+    } else {
+      note = "Armadas a partir de las inteligencias donde marcaste habilidad (4/5) o sobresaliste (5/5).";
+    }
+
+    let html = '<h3>Profesiones que podrían interesarte</h3>';
+    html += '<div class="career-note">' + note + '</div>';
+    leading.forEach(cat => {
+      const info = categories[cat];
+      const offers = localOffers[cat] || [];
+      html += '<div class="career-group">';
+      html += '<div class="career-cat">' + info.name + '</div>';
+      html += '<div class="chip-row">' + info.perf.map(p => '<span class="chip">' + p + '</span>').join('') + '</div>';
+      html += '<div class="local-offers">';
+      html += '<div class="local-label">Formación disponible en Almirante Brown (trayectos que comienzan después del receso)</div>';
+      if (offers.length > 0){
+        html += '<ul>' + offers.map(o => '<li>' + o.course + ' <span class="place">— ' + o.place + '</span></li>').join('') + '</ul>';
+      } else {
+        html += '<div class="empty">Por ahora no encontramos un curso específico del distrito para esta inteligencia — vale la pena revisar el buscador de Formate Brown o las diplomaturas de la UNAB.</div>';
+      }
+      html += '</div>';
+      html += '</div>';
+    });
+    html += '<a class="portal-link" href="' + FORMATE_BROWN_URL + '" target="_blank" rel="noopener noreferrer">Ver toda la oferta oficial en Formate Brown →</a>';
+    document.getElementById('career-panel').innerHTML = html;
+  }
+
+  // ---------- NUEVO: DESCARGAR RESULTADOS EN PDF ----------
+  downloadResultsBtn.addEventListener('click', function() {
+    if (!lastScores || !lastOrder) {
+      alert('Primero completá el test para ver los resultados.');
+      return;
+    }
+    if (typeof window.jspdf === 'undefined') {
+      alert('La librería para generar PDF no está disponible. Revisá tu conexión a internet.');
+      return;
+    }
+
+    const originalHTML = downloadResultsBtn.innerHTML;
+    downloadResultsBtn.disabled = true;
+    downloadResultsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando PDF…';
+
+    try {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+      const pageW = 210;
+      let y = 20;
+
+      // Título
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(20);
+      doc.setTextColor(5, 121, 82);
+      doc.text('Resultados del Test de Inteligencias Múltiples', pageW / 2, y, { align: 'center' });
+      y += 10;
+
+      doc.setFontSize(12);
+      doc.setTextColor(80, 80, 80);
+      doc.setFont('helvetica', 'normal');
+      const fecha = new Date().toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' });
+      doc.text('Fecha: ' + fecha, pageW / 2, y, { align: 'center' });
+      y += 12;
+
+      // Puntajes
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(5, 121, 82);
+      doc.text('Puntajes obtenidos', 20, y);
+      y += 8;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(50, 50, 50);
+
+      const sorted = Object.keys(lastScores).sort((a,b) => lastScores[b] - lastScores[a]);
+      sorted.forEach((cat, idx) => {
+        const name = categories[cat].name;
+        const score = lastScores[cat];
+        const bar = '█'.repeat(score) + '░'.repeat(5 - score);
+        doc.text(name + ':', 20, y);
+        doc.text(score + '/5   ' + bar, 100, y);
+        y += 7;
+        if (y > 270) { doc.addPage(); y = 20; }
+      });
+
+      y += 6;
+
+      // Profesiones recomendadas
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(5, 121, 82);
+      doc.text('Profesiones recomendadas', 20, y);
+      y += 8;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(50, 50, 50);
+
+      let leading = lastOrder.filter(cat => lastScores[cat] >= 4);
+      if (leading.length === 0) leading = lastOrder.slice(0, 2);
+
+      leading.forEach(cat => {
+        const info = categories[cat];
+        doc.setFont('helvetica', 'bold');
+        doc.text('• ' + info.name + ':', 20, y);
+        y += 6;
+        doc.setFont('helvetica', 'normal');
+        const perfList = info.perf.join(', ');
+        const lines = doc.splitTextToSize(perfList, 170);
+        doc.text(lines, 25, y);
+        y += lines.length * 5 + 2;
+        if (y > 270) { doc.addPage(); y = 20; }
+      });
+
+      // Ofertas formativas (solo si hay)
+      const hasOffers = leading.some(cat => (localOffers[cat] || []).length > 0);
+      if (hasOffers) {
+        y += 4;
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(14);
+        doc.setTextColor(5, 121, 82);
+        doc.text('Formación disponible en Almirante Brown', 20, y);
+        y += 8;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(60, 60, 60);
+
+        leading.forEach(cat => {
+          const offers = localOffers[cat] || [];
+          if (offers.length === 0) return;
+          doc.setFont('helvetica', 'bold');
+          doc.text(categories[cat].name + ':', 20, y);
+          y += 5;
+          doc.setFont('helvetica', 'normal');
+          offers.forEach(o => {
+            const line = '• ' + o.course + ' (' + o.place + ')';
+            const lines = doc.splitTextToSize(line, 170);
+            doc.text(lines, 25, y);
+            y += lines.length * 5 + 1;
+            if (y > 270) { doc.addPage(); y = 20; }
+          });
+          y += 2;
+        });
+      }
+
+      // Pie de página
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(9);
+      doc.setTextColor(150, 150, 150);
+      doc.text('Test vocacional · E.P.S Agraria n°1 Alte. Brown', pageW / 2, 285, { align: 'center' });
+
+      doc.save('Resultados-Test-Vocacional.pdf');
+
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      alert('Ocurrió un error al generar el PDF: ' + error.message);
+    }
+
+    downloadResultsBtn.disabled = false;
+    downloadResultsBtn.innerHTML = originalHTML;
+  });
+
+  // ---------- QR / PDF (con API, igual que antes) ----------
+  const qrBtn = document.getElementById('qr-btn');
+  qrBtn.addEventListener('click', async function() {
+    const originalHTML = qrBtn.innerHTML;
+    qrBtn.disabled = true;
+    qrBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando QR…';
+
+    if (typeof window.jspdf === 'undefined') {
+      alert('La librería para generar PDF no está disponible. Revisá tu conexión a internet.');
+      qrBtn.disabled = false;
+      qrBtn.innerHTML = originalHTML;
+      return;
+    }
+
+    const url = window.location.href;
+    if (url.indexOf('file:') === 0) {
+      if (!confirm('Estás abriendo esta página desde un archivo local (file://). El QR apuntará a esa URL local y probablemente no sea escaneable desde otro dispositivo. ¿Querés continuar?')) {
+        qrBtn.disabled = false;
+        qrBtn.innerHTML = originalHTML;
+        return;
+      }
+    }
+
+    try {
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=800x800&data=${encodeURIComponent(url)}`;
+      const response = await fetch(qrApiUrl);
+      if (!response.ok) throw new Error('Error al obtener el QR desde la API');
+      const blob = await response.blob();
+
+      const reader = new FileReader();
+      const base64 = await new Promise((resolve, reject) => {
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+      const pageW = 210, pageH = 297;
+
+      doc.setFillColor(10, 170, 95);
+      doc.rect(0, 0, pageW, 34, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(19);
+      doc.text('E.P.S AGRARIA N°1 · ALTE. BROWN', pageW / 2, 21, { align: 'center' });
+
+      doc.setTextColor(5, 121, 82);
+      doc.setFontSize(34);
+      doc.text('Test Vocacional', pageW / 2, 62, { align: 'center' });
+
+      doc.setTextColor(80, 80, 80);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(15);
+      doc.text('Test de Inteligencias Múltiples', pageW / 2, 74, { align: 'center' });
+
+      const qrSize = 115;
+      const qrX = (pageW - qrSize) / 2;
+      const qrY = 90;
+      doc.setDrawColor(10, 170, 95);
+      doc.setLineWidth(0.8);
+      doc.rect(qrX - 4, qrY - 4, qrSize + 8, qrSize + 8);
+      doc.addImage(base64, 'PNG', qrX, qrY, qrSize, qrSize);
+
+      doc.setTextColor(30, 30, 30);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.text('Escaneá el código con la cámara de tu celular', pageW / 2, qrY + qrSize + 22, { align: 'center' });
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(13);
+      doc.setTextColor(90, 90, 90);
+      doc.text('Descubrí qué carreras, oficios y cursos del distrito van con vos.', pageW / 2, qrY + qrSize + 32, { align: 'center' });
+
+      doc.setFillColor(5, 121, 82);
+      doc.rect(0, pageH - 20, pageW, 20, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.text(url, pageW / 2, pageH - 8, { align: 'center' });
+
+      doc.save('Test-vocacional-QR-A4.pdf');
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Ocurrió un error al generar el PDF: ' + error.message);
+    }
+
+    qrBtn.disabled = false;
+    qrBtn.innerHTML = originalHTML;
+  });
+
+})();
+</script>
+</body>
+</html>

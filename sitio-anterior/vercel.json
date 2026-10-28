@@ -1,0 +1,127 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/acelga.html",
+      "destination": "/cultivo.html?slug=acelga",
+      "permanent": true
+    },
+    {
+      "source": "/achicoria.html",
+      "destination": "/cultivo.html?slug=achicoria",
+      "permanent": true
+    },
+    {
+      "source": "/ajo.html",
+      "destination": "/cultivo.html?slug=ajo",
+      "permanent": true
+    },
+    {
+      "source": "/anco.html",
+      "destination": "/cultivo.html?slug=anco",
+      "permanent": true
+    },
+    {
+      "source": "/banana.html",
+      "destination": "/cultivo.html?slug=banana",
+      "permanent": true
+    },
+    {
+      "source": "/berenjena.html",
+      "destination": "/cultivo.html?slug=berenjena",
+      "permanent": true
+    },
+    {
+      "source": "/brocoli.html",
+      "destination": "/cultivo.html?slug=brocoli",
+      "permanent": true
+    },
+    {
+      "source": "/cebolla.html",
+      "destination": "/cultivo.html?slug=cebolla",
+      "permanent": true
+    },
+    {
+      "source": "/espinaca.html",
+      "destination": "/cultivo.html?slug=espinaca",
+      "permanent": true
+    },
+    {
+      "source": "/frutilla.html",
+      "destination": "/cultivo.html?slug=frutilla",
+      "permanent": true
+    },
+    {
+      "source": "/lechuga.html",
+      "destination": "/cultivo.html?slug=lechuga",
+      "permanent": true
+    },
+    {
+      "source": "/maiz.html",
+      "destination": "/cultivo.html?slug=maiz",
+      "permanent": true
+    },
+    {
+      "source": "/manzana.html",
+      "destination": "/cultivo.html?slug=manzana",
+      "permanent": true
+    },
+    {
+      "source": "/naranja.html",
+      "destination": "/cultivo.html?slug=naranja",
+      "permanent": true
+    },
+    {
+      "source": "/papa.html",
+      "destination": "/cultivo.html?slug=papa",
+      "permanent": true
+    },
+    {
+      "source": "/perejil.html",
+      "destination": "/cultivo.html?slug=perejil",
+      "permanent": true
+    },
+    {
+      "source": "/remolacha.html",
+      "destination": "/cultivo.html?slug=remolacha",
+      "permanent": true
+    },
+    {
+      "source": "/repollo%20morado.html",
+      "destination": "/cultivo.html?slug=repollo-morado",
+      "permanent": true
+    },
+    {
+      "source": "/repollo morado.html",
+      "destination": "/cultivo.html?slug=repollo-morado",
+      "permanent": true
+    },
+    {
+      "source": "/tomates.html",
+      "destination": "/cultivo.html?slug=tomates",
+      "permanent": true
+    },
+    {
+      "source": "/zanahoria.html",
+      "destination": "/cultivo.html?slug=zanahoria",
+      "permanent": true
+    }
+  ],
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "css/**"
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/instagram",
+      "schedule": "0 9 * * *"
+    }
+  ]
+}
