@@ -2169,3 +2169,94 @@ footer {
     font-size: 2rem;
     color: var(--secundario);
 }
+
+/* Carrusel de Instagram del inicio: 2 posteos a la vista en el celular y 3 en la compu */
+.carrusel-ig {
+    --visibles: 2;
+    --separacion: 1rem;
+    margin-bottom: 3rem;
+}
+@media (min-width: 768px) {
+    .carrusel-ig {
+        --visibles: 3;
+    }
+}
+.carrusel-ig__titulo {
+    font-family: var(--fuenteprincipal);
+    font-size: 2.4rem;
+    text-align: center;
+    margin: 0 0 1.5rem;
+}
+.carrusel-ig__titulo a {
+    color: var(--blanco);
+}
+.carrusel-ig__titulo i {
+    color: var(--secundario);
+}
+.carrusel-ig__marco {
+    position: relative;
+}
+.carrusel-ig__pista {
+    display: flex;
+    gap: var(--separacion);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--separacion);
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    padding: var(--separacion);
+    background-color: var(--primarioOscuro);
+}
+.carrusel-ig__pista::-webkit-scrollbar {
+    display: none;
+}
+.carrusel-ig__pista > .galeria__item {
+    flex: 0 0 calc((100% - (var(--visibles) - 1) * var(--separacion)) / var(--visibles));
+    scroll-snap-align: start;
+}
+.carrusel-ig__mas {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    font-family: var(--fuenteprincipal);
+    font-size: 2.2rem;
+    color: var(--blanco);
+    border: 0.2rem dashed var(--secundario);
+}
+.carrusel-ig__mas i {
+    display: block;
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: var(--secundario);
+}
+.carrusel-ig__flecha {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    width: 4.4rem;
+    height: 4.4rem;
+    transform: translateY(-50%);
+    border: none;
+    border-radius: 50%;
+    background-color: var(--secundario);
+    color: var(--negro);
+    font-size: 3.2rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.4);
+}
+.carrusel-ig__flecha--izq {
+    left: -1rem;
+}
+.carrusel-ig__flecha--der {
+    right: -1rem;
+}
+.carrusel-ig__flecha:disabled {
+    opacity: 0;
+    pointer-events: none;
+}
+.carrusel-ig__flecha:focus-visible {
+    outline: 0.3rem solid var(--blanco);
+}
