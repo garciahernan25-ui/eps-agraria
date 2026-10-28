@@ -3,7 +3,7 @@
 // nuestro servidor, que no acepta más de 4.5 MB). En tu compu y sin
 // BLOB_READ_WRITE_TOKEN, se guarda en .subidas-locales/.
 import { upload } from '@vercel/blob/client';
-import { tipoDeMime, type Carpeta } from '@/lib/compartido/formatos';
+import { EXTENSIONES, tipoDeMime, type Carpeta } from '@/lib/compartido/formatos';
 import type { TipoMedio } from '@/lib/compartido/tipos';
 import { api } from './api';
 
@@ -17,10 +17,12 @@ function obtenerConfiguracion() {
     return configuracion;
 }
 
-// Nombre seguro para la URL: sin acentos, espacios ni símbolos.
-function nombreLimpio(nombre: string): string {
-    return nombre.normalize('NFD').replace(/[̀-ͯ]/g, '')
-        .replace(/[^\w.-]+/g, '-').replace(/-+/g, '-').slice(-60).toLowerCase() || 'archivo';
+// Nombre seguro para la URL: sin acentos, espacios ni símbolos, y con la extensión
+// que corresponde a su formato (por ejemplo, "foto.jfif" pasa a "foto.jpg").
+function nombreLimpio(nombre: string, mime: string): string {
+    const base = nombre.replace(/\.[^.]*$/, '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .replace(/[^\w-]+/g, '-').replace(/-+/g, '-').slice(-55).toLowerCase() || 'archivo';
+    return `${base}.${EXTENSIONES[mime]}`;
 }
 
 // Revisa formato y tamaño antes de subir. Devuelve 'foto' o 'video', o lanza un Error con el motivo.
@@ -42,12 +44,14 @@ export async function subirArchivo(archivo: File, carpeta: Carpeta, { soloFotos 
 } = {}): Promise<{ url: string; tipo: TipoMedio }> {
     const tipo = await validarArchivo(archivo, { soloFotos });
     const { modo } = await obtenerConfiguracion();
-    const nombre = nombreLimpio(archivo.name);
+    const nombre = nombreLimpio(archivo.name, archivo.type);
 
     if (modo === 'blob') {
         try {
             const blob = await upload(`${carpeta}/${nombre}`, archivo, {
                 access: 'public',
+                // Sin esto Blob adivina el tipo por la extensión y rechaza las que no conoce.
+                contentType: archivo.type,
                 handleUploadUrl: '/api/subidas',
                 clientPayload: JSON.stringify({ tipo }),
                 multipart: archivo.size > 20 * MB,

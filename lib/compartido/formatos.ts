@@ -15,6 +15,13 @@ export type Carpeta = (typeof CARPETAS)[number];
 // Sin Blob configurado y fuera de Vercel, los archivos se guardan en esta carpeta.
 export const CARPETA_LOCAL = 'subidas-locales';
 
+// Extensión con la que se guarda cada formato. Así, una foto ".jfif" (que es un JPG)
+// queda como ".jpg" y Blob la reconoce.
+export const EXTENSIONES: Record<string, string> = {
+    'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif',
+    'video/mp4': 'mp4', 'video/webm': 'webm', 'video/quicktime': 'mov',
+};
+
 export function tipoDeMime(mime: string): TipoMedio | null {
     return (Object.keys(TIPOS) as TipoMedio[]).find(tipo => TIPOS[tipo].mime.includes(mime)) ?? null;
 }
